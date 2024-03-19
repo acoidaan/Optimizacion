@@ -7,6 +7,7 @@
  */
 
 #include "grafo.h"
+#include <cassert>
 
 void GRAFO :: destroy() {
 	for (unsigned i=0; i< n; i++) {
@@ -36,13 +37,27 @@ void GRAFO :: build (char nombrefichero[85], int &errorapertura) {
         // leemos los m arcos
 		for (k=0;k<m;k++) {
 			textfile >> (unsigned &) i  >> (unsigned &) j >> (int &) dummy.c;
-			//damos los valores a dummy.j y dummy.c
+			dummy.j = j - 1;
+      LS[i - 1].push_back(dummy);
+      if (dirigido == 1) {
+        dummy.j = i - 1;
+        LP[j - 1].push_back(dummy);
+      } else {
+        assert( i != j);
+        dummy.j = i - 1;
+        LS[j - 1].push_back(dummy);
+      }
+    }
+    textfile.close(nombrefichero);
+    errorapertura = 0;
+      
+      
+      //damos los valores a dummy.j y dummy.c
 			//situamos en la posici�n del nodo i a dummy mediante push_back
 			//pendiente de hacer un segundo push_back si es no dirigido. O no.
 			//pendiente la construcci�n de LP, si es dirigido
 			//pendiente del valor a devolver en errorapertura
 			//...}
-      }
   }
 }
 
@@ -54,7 +69,7 @@ GRAFO::GRAFO(char nombrefichero[85], int &errorapertura) {
 	build (nombrefichero, errorapertura);
 }
 
-void GRAFO:: actualizar (char nombrefichero[85], int &errorapertura) {
+void GRAFO::actualizar(char nombrefichero[85], int &errorapertura) {
     //Limpiamos la memoria dinamica asumida en la carga previa, como el destructor
     destroy();
     //Leemos del fichero y actualizamos G con nuevas LS y, en su caso, LP
@@ -93,7 +108,24 @@ void GRAFO::dfs_num(unsigned i, vector<LA_nodo>  L, vector<bool> &visitado, vect
 }
 
 void GRAFO::RecorridoProfundidad() {
+  vector<bool> visitado;
+  visitado.resize(n, false);
 
+  vector<unsigned> prenum;
+  prenum.resize(n, 0);
+  vector<unsigned> postnum;
+  postnum.resize(n, 0);
+
+  unsigned prenum_ind = 0;
+  unsigned postnum_ind = 0;
+
+  unsigned i;
+
+  cout << "Introduzca el nodo inicial: ";
+  cin >> (unsigned &) i;
+
+  dfs_num(i - 1, LS, visitado, prenum, prenum_ind, postnum, postnum_ind);
+  // Imprimir prenum y postnum
 }
 
 void GRAFO::bfs_num(	unsigned i, //nodo desde el que realizamos el recorrido en amplitud
@@ -116,21 +148,32 @@ void GRAFO::bfs_num(	unsigned i, //nodo desde el que realizamos el recorrido en 
     while (!cola.empty()) {//al menos entra una vez al visitar el nodo i+1 y contin�a hasta que la cola se vac�e
       unsigned k = cola.front(); //cogemos el nodo k+1 de la cola
       cola.pop(); //lo sacamos de la cola
-        //Hacemos el recorrido sobre L desde el nodo k+1
-        for (unsigned j=0;j<L[k].size();j++) {
-          //Recorremos todos los nodos u adyacentes al nodo k+1
-          //Si el nodo u no est� visitado
-          
-            //Lo visitamos
-            //Lo metemos en la cola
-            //le asignamos el predecesor
-            //le calculamos su etiqueta distancia
-            };
+      //Hacemos el recorrido sobre L desde el nodo k+1
+      for (unsigned j = 0; j < L[k].size(); j++) {
+        //Recorremos todos los nodos u adyacentes al nodo k+1
+        //Si el nodo u no est� visitado
+        if (!visitado[L[k][j].j]) {
+        //Lo visitamos
+          visitado[L[k][j].j] = true;
+        //Lo metemos en la cola
+          cola.push(L[k][j].j);
+        //le asignamos el predecesor
+          pred[L[k][j].j] = k;
+        //le calculamos su etiqueta distancia
+          d[L[k][j].j] = d[k] + 1;
+        }
+      }
         //Hemos terminado pues la cola est� vac�a
     };
 }
 
 void RecorridoAmplitud() { //Construye un recorrido en amplitud desde un nodo inicial
+  unsigned i;
 
+  cout << "Introduzca el nodo inicial (1<= nodo <= n): ";
+  cin >> (unsigned &) i;
 
+  bfs_num(i - 1, LS, pred, d);
+
+  
 }
