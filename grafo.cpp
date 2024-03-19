@@ -48,7 +48,7 @@ void GRAFO :: build (char nombrefichero[85], int &errorapertura) {
         LS[j - 1].push_back(dummy);
       }
     }
-    textfile.close(nombrefichero);
+    textfile.close();
     errorapertura = 0;
       
       
@@ -77,19 +77,70 @@ void GRAFO::actualizar(char nombrefichero[85], int &errorapertura) {
 }
 
 unsigned GRAFO::Es_dirigido() {
-
+  return dirigido;
 }
 
 void GRAFO::Info_Grafo() {
-
+  cout << "Información del grafo: " << endl;
+  cout << "Número de nodos: " << n << endl;
+  cout << "Número de arcos/aristas: " << m << endl;
+  if (dirigido == 1) {
+    cout << "El grafo es dirigido." << endl;
+  } else {
+    cout << "El grafo no es dirigido. " << endl;
+  }
 }
 
 void Mostrar_Lista(vector<LA_nodo> L) {
-
+  for (const auto &nodo : L) {
+    for (const auto &elemento : nodo) {
+      cout << "Nodo: " << elemento.j + 1 << "Peso: " << elemento.c << endl;
+    }
+  }
 }
 
-void GRAFO :: Mostrar_Listas (int l) {
-
+void GRAFO::Mostrar_Listas (int l) {
+  if (l == -1) { // Si el grafo es no dirigido o queremos mostrar predecesores 
+    if(Es_dirigido()) { // Si es dirigido, mostramos predecesores
+      cout << "Lista de predecesores por nodo: " << endl;
+      for(unsigned i = 0; i < LP.size(); ++i) {
+        cout << "Nodo " << i + 1 << " :";
+        for (auto &adyacente : LP[i]) {
+          cout << " " << adyacente.j + 1 << "(Coste: " << adyacente.c << ")";
+        }
+        cout << endl;
+      }
+    } else { // Si el grafo es no dirigido, mostramos la lista de adyacencia
+      cout << "Lista de adyacencia por nodo: " << endl;
+      for(unsigned i = 0; i < LS.size(); ++i) {
+        cout << "Nodo " << i + 1 << " :";
+        for(auto &adyacente : LS[i]) {
+          cout << " " << adyacente.j + 1 << "(Coste: " << adyacente.c << ")";
+        }
+        cout << endl;
+      }
+    }
+  } else if (l == 1) {  // Si queremos mostrar sucesores
+    cout << "Lista de sucesores por nodo: " << endl;
+    for(unsigned i = 0; i < LS.size(); ++i) {
+      cout << "Nodo " << i + 1 << " :";
+      for (auto &adyacente : LS[i]) {
+        cout << " " << adyacente.j + 1 << "(Coste: " << adyacente.c << ")";
+      }
+      cout << endl;
+    }
+  } else if (l == 0) {  // Mostrar solo la lista de adyacencia
+  cout << "Lista de adyacencia por nodo: " << endl;
+  for (unsigned i = 0; i < A.size(); ++i) {
+    cout << "Nodo " << i + 1 << " :";
+    for(auto &adyacente : A[i]) {
+      cout << " " << adyacente.j + 1 << "(Coste " << adyacente.c << ")";
+    }
+    cout << endl;
+  }
+  } else {
+  cout << "El parametro introducido no es valido" << endl;
+  }
 }
 
 void GRAFO::Mostrar_Matriz() {//Muestra la matriz de adyacencia, tanto los nodos adyacentes como sus costes
@@ -163,12 +214,14 @@ void GRAFO::bfs_num(	unsigned i, //nodo desde el que realizamos el recorrido en 
           d[L[k][j].j] = d[k] + 1;
         }
       }
-        //Hemos terminado pues la cola est� vac�a
+        //Hemos terminado pues la cola está vacía
     };
 }
 
-void RecorridoAmplitud() { //Construye un recorrido en amplitud desde un nodo inicial
+void GRAFO::RecorridoAmplitud() { //Construye un recorrido en amplitud desde un nodo inicial
   unsigned i;
+  vector<unsigned> pred;
+  vector<unsigned> d;
 
   cout << "Introduzca el nodo inicial (1<= nodo <= n): ";
   cin >> (unsigned &) i;
