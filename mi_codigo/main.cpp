@@ -19,13 +19,27 @@ void menu (unsigned dirigido, char &opcion)
             {
             cout << "i. Mostrar [i]nformacion basica del grafo" << endl;
             cout << "a. Mostrar la lista de [a]dyacencia del grafo" << endl;
+            cout << "y. Mostrar la matriz de ad[y]acencia del grafo" << endl;
+            cout << "m. Realizar un recorrido en a[m]plitud del grafo desde un nodo" << endl;
+            cout << "r. Realizar un recorrido en p[r]ofundidad del grafo desde un nodo" << endl;
+            cout << "o. Mostrar c[o]mponentes conexas del grafo" << endl;
+            cout << "k. Mostrar arbol generador minimo coste, [k]ruskal" << endl;
+            cout << "p. Mostrar arbol generador minimo coste, [p]rim" << endl;
 	    //Aqu� se a�aden m�s opciones al men� del grafo no dirigido
             }
     else
             {
             cout << "i. Mostrar [i]nformacion basica del grafo" << endl;
             cout << "s. Mostrar la lista de [s]ucesores del grafo" << endl;
-            cout << "p. Mostrar la lista de [p]redecesores del grafo" << endl;
+            cout << "e. Mostrar la lista de pr[e]decesores del grafo" << endl;
+            cout << "y. Mostrar la matriz de ad[y]acencia del grafo" << endl;
+            cout << "m. Realizar un recorrido en a[m]plitud del grafo desde un nodo por sus sucesores" << endl;
+            cout << "r. Realizar un recorrido en p[r]ofuncidad del grafo desde un nodo por sucesores" << endl;
+            cout << "d. Caminos minimos: [d]ijkstra" << endl;
+            cout << "v. Caminos minimos: Comparamos Dijkstra [v]s BellmanFordEnd" << endl;
+            cout << "x. Caminos minimos: Modificacion de Pape y Dsopo" << endl;
+            cout << "f. Caminos minimos [f]loyd-warshall" << endl;
+
 	    //Aqu� se a�aden m�s opciones al men� del grafo dirigido
             };
     cout << "q. Finalizar el programa" << endl;
@@ -39,7 +53,7 @@ int main(int argc, char *argv[])
 {
     int error_apertura;
     char nombrefichero[85], opcion;
-    //clrscr();
+    system("clear");
     //Si tenemos el nombre del primer fichero por argumento, es una excepcion, y lo intentamos cargar, si no, lo pedimos desde teclado
     if (argc > 1)
     {
@@ -56,20 +70,20 @@ int main(int argc, char *argv[])
     {
         cout << "Error en la apertura del fichero desde argumento: revisa nombre y formato" << endl;
         //pressanykey();
-        //clrscr();
+      system("clear");
     }
     else
     {
         cout<< "Grafo cargado desde el fichero " << nombrefichero << endl;
         // pressanykey();
-        // clrscr();
+        // system("clear");
         do
         {
             menu(G.Es_dirigido(), opcion);
             switch (opcion)
             {
                 case 'c' :
-                    // clrscr();
+                    system("clear");
          	    cout << "Introduce el nombre completo del fichero de datos" << endl;
                     cin >> nombrefichero;
                     G.actualizar(nombrefichero, error_apertura);
@@ -82,18 +96,37 @@ int main(int argc, char *argv[])
                         cout << "Fichero cargado correctamente desde " << nombrefichero << endl;
                     };
                     // pressanykey();
-                    // clrscr();
+                    // system("clear");
                     break;
 
                 case 'i' :
-                    // clrscr();
+                  //system("clear");
 		    cout << "Grafo cargado desde " << nombrefichero << endl;
                     G.Info_Grafo();
                     // pressanykey();
-                    // clrscr();
+                    //system("clear");
                     break;
 
 		 //Situar aqu� el resto de opciones del men�
+                case 's':
+                  cout << "Grafo cargado desde " << nombrefichero << endl;
+                  G.Mostrar_Listas(1);
+                  break;
+
+                case 'e':
+                  G.Mostrar_Listas(-1);
+                  break;
+                case 'y':
+                  G.Mostrar_Matriz();
+                  break;
+                case 'm':
+                  G.RecorridoAmplitud();
+                  break;
+                // case 'r':
+                // case 'd':
+                // case 'v':
+                // case 'x':
+                // case 'f':
             }
     }
     while (opcion != 'q');

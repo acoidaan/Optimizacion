@@ -34,6 +34,7 @@ void GRAFO :: build (char nombrefichero[85], int &errorapertura) {
 		// los nodos internamente se numeran desde 0 a n-1
 		// creamos las n listas de sucesores
 		LS.resize(n);
+    LP.resize(n);
         // leemos los m arcos
 		for (k=0;k<m;k++) {
 			textfile >> (unsigned &) i  >> (unsigned &) j >> (int &) dummy.c;
@@ -65,11 +66,13 @@ GRAFO::~GRAFO() {
 	destroy();
 }
 
-GRAFO::GRAFO(char nombrefichero[85], int &errorapertura) {
+GRAFO::GRAFO(char nombrefichero[85], int &errorapertura)
+{
 	build (nombrefichero, errorapertura);
 }
 
-void GRAFO::actualizar(char nombrefichero[85], int &errorapertura) {
+void GRAFO:: actualizar (char nombrefichero[85], int &errorapertura)
+{
     //Limpiamos la memoria dinamica asumida en la carga previa, como el destructor
     destroy();
     //Leemos del fichero y actualizamos G con nuevas LS y, en su caso, LP
@@ -81,14 +84,13 @@ unsigned GRAFO::Es_dirigido() {
 }
 
 void GRAFO::Info_Grafo() {
-  cout << "Información del grafo: " << endl;
-  cout << "Número de nodos: " << n << endl;
-  cout << "Número de arcos/aristas: " << m << endl;
-  if (dirigido == 1) {
-    cout << "El grafo es dirigido." << endl;
+  if(dirigido == 1) {
+    cout << "Grafo dirigido" << " | ";
   } else {
-    cout << "El grafo no es dirigido. " << endl;
+    cout << "Grafo no dirigido" << " | ";
   }
+  cout << "Nodos " << n << " | ";
+  cout << "Arcos " << m << " | " << endl;
 }
 
 void Mostrar_Lista(vector<LA_nodo> L) {
@@ -101,50 +103,65 @@ void Mostrar_Lista(vector<LA_nodo> L) {
 
 void GRAFO::Mostrar_Listas (int l) {
   if (l == -1) { // Si el grafo es no dirigido o queremos mostrar predecesores 
-    if(Es_dirigido()) { // Si es dirigido, mostramos predecesores
-      cout << "Lista de predecesores por nodo: " << endl;
-      for(unsigned i = 0; i < LP.size(); ++i) {
+      cout << (Es_dirigido() ? "Lista de predecesores por nodo:" : "Lista de adyacentes por nodo:") << endl;
+      auto &lista = Es_dirigido() ? LP : LS;   // Elige LP o LS basado en si es dirigido o no
+      for(unsigned i = 0; i < lista.size(); ++i) {
         cout << "Nodo " << i + 1 << " :";
-        for (auto &adyacente : LP[i]) {
+        for(auto &adyacente : lista[i]) {
           cout << " " << adyacente.j + 1 << "(Coste: " << adyacente.c << ")";
         }
         cout << endl;
       }
-    } else { // Si el grafo es no dirigido, mostramos la lista de adyacencia
-      cout << "Lista de adyacencia por nodo: " << endl;
-      for(unsigned i = 0; i < LS.size(); ++i) {
-        cout << "Nodo " << i + 1 << " :";
-        for(auto &adyacente : LS[i]) {
-          cout << " " << adyacente.j + 1 << "(Coste: " << adyacente.c << ")";
-        }
-        cout << endl;
-      }
-    }
-  } else if (l == 1) {  // Si queremos mostrar sucesores
-    cout << "Lista de sucesores por nodo: " << endl;
+  } else if (l == 1) {
+    cout << "Lista de sucesores por nodo:" << endl;
     for(unsigned i = 0; i < LS.size(); ++i) {
       cout << "Nodo " << i + 1 << " :";
-      for (auto &adyacente : LS[i]) {
+      for(auto &adyacente : LS[i]) {
         cout << " " << adyacente.j + 1 << "(Coste: " << adyacente.c << ")";
       }
       cout << endl;
     }
-  } else if (l == 0) {  // Mostrar solo la lista de adyacencia
-  cout << "Lista de adyacencia por nodo: " << endl;
-  for (unsigned i = 0; i < A.size(); ++i) {
-    cout << "Nodo " << i + 1 << " :";
-    for(auto &adyacente : A[i]) {
-      cout << " " << adyacente.j + 1 << "(Coste " << adyacente.c << ")";
-    }
-    cout << endl;
-  }
   } else {
-  cout << "El parametro introducido no es valido" << endl;
+    cout << "El parametro introducido no es valido" << endl;
   }
 }
 
 void GRAFO::Mostrar_Matriz() {//Muestra la matriz de adyacencia, tanto los nodos adyacentes como sus costes
+  vector<vector<int>> matriz_ady(n, vector<int>(n, 0));
+  vector<vector<int>> matriz_costes(n, vector<int>(n, -1));
 
+  for(unsigned i = 0; i < LS.size(); ++i) {
+    for(auto adyacente : LS[i]) {
+      matriz_ady[i][adyacente.j] = 1;
+      matriz_costes[i][adyacente.j] = adyacente.c;
+      if(!dirigido) {
+        matriz_ady[adyacente.j][i] = 1;
+        matriz_costes[adyacente.j][i] = adyacente.c;
+      }
+    }
+  }
+
+  cout << "Matriz de adyacencia" << endl;
+  for(const auto& fila : matriz_ady) {
+    cout << " | ";
+    for(int ady : fila) {
+      cout << ady << " ";
+    }
+    cout << "|" << endl;
+  }
+
+  cout << endl << "Matriz de costes" << endl;
+  for(const auto& fila : matriz_costes) {
+    cout << " | ";
+    for (int coste : fila) {
+      if (coste == -1) {
+        cout << " Inf ";
+      } else {
+        cout << coste << " ";
+      }
+    }
+  cout << "|" << endl;
+  }
 }
 
 void GRAFO::dfs_num(unsigned i, vector<LA_nodo>  L, vector<bool> &visitado, vector<unsigned> &prenum, unsigned &prenum_ind, vector<unsigned> &postnum, unsigned &postnum_ind) {//Recorrido en profundidad recursivo con recorridos enum y postnum
@@ -223,10 +240,42 @@ void GRAFO::RecorridoAmplitud() { //Construye un recorrido en amplitud desde un 
   vector<unsigned> pred;
   vector<unsigned> d;
 
-  cout << "Introduzca el nodo inicial (1<= nodo <= n): ";
+  cout << "Vamos a realizar un recorrido en amplitud" << endl;
+  cout << "Elije el nodo de partida: [1-" << n << "]: ";
   cin >> (unsigned &) i;
 
+  cout << endl << "Nodo inicial: " << i << endl << endl;
   bfs_num(i - 1, LS, pred, d);
 
-  
+  unsigned max_distancia = 0;
+  for(unsigned j = 0; j < d.size(); ++j) {
+    if(d[j] > max_distancia) {
+      max_distancia = d[j];
+    }
+  }
+
+  cout << "Nodos segun distancia al nodo inicial en numero de aristas" << endl;
+  for(unsigned distancia = 0; distancia < max_distancia; ++distancia) {
+  cout << "Distancia " << distancia << " aristas :";
+    bool first = true;
+    for(unsigned j = 0; j < n; ++j) {
+      if(d[j] == distancia) {
+        if(!first) {
+          cout << " :";
+        }
+        cout << " " << j + 1;
+        first = false;
+      }
+    }
+    cout << endl;
+  }
+
+  cout << endl << "Ramas de conexión en el recorrido" << endl;
+  for(unsigned j = 0; j < n; ++j) {
+    if(pred[j] != i - 1 && j != i - 1) {
+      cout << pred[pred[j]] + 1 << " - " << pred[j] << " - " << j + 1 << endl;
+    } else if (j != i - 1) {
+      cout << pred[j] + 1 << " - " << j + 1 << endl;
+    }
+  }
 }
