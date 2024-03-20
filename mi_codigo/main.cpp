@@ -7,7 +7,14 @@
  */
 
 #include <string.h>
+#include <limits>
 #include "grafo.h"
+
+void limpiarBufferEntrada() {
+    // std::cin.ignore ignora el máximo número posible de caracteres
+    // hasta que encuentra un salto de línea ('\n')
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+}
 
 
 void menu (unsigned dirigido, char &opcion)
@@ -51,7 +58,7 @@ void menu (unsigned dirigido, char &opcion)
 // El principal es simplemente un gestor de menu, diferenciando acciones para dirigido y para no dirigido, y un men� inicial si no hay un grafo cargado
 int main(int argc, char *argv[])
 {
-    int error_apertura;
+    int error_apertura{0};
     char nombrefichero[85], opcion;
     system("clear");
     //Si tenemos el nombre del primer fichero por argumento, es una excepcion, y lo intentamos cargar, si no, lo pedimos desde teclado
@@ -100,29 +107,67 @@ int main(int argc, char *argv[])
                     break;
 
                 case 'i' :
-                  //system("clear");
-		    cout << "Grafo cargado desde " << nombrefichero << endl;
+                  system("clear");
+		                cout << "Grafo cargado desde " << nombrefichero << endl;
                     G.Info_Grafo();
-                    // pressanykey();
-                    //system("clear");
+                    limpiarBufferEntrada();
+                    cout << endl << endl;
+                    cout << "Introduce la letra [c] para continuar: ";
+                    getchar();
+                    system("clear");
                     break;
 
 		 //Situar aqu� el resto de opciones del men�
                 case 's':
+                  system("clear");
                   cout << "Grafo cargado desde " << nombrefichero << endl;
                   G.Mostrar_Listas(1);
+                  limpiarBufferEntrada();
+                  cout << endl << endl;
+                  cout << "Introduce la letra [c] para continuar: ";
+                  getchar();
+                  system("clear");
                   break;
 
                 case 'e':
+                  system("clear");
                   G.Mostrar_Listas(-1);
+                  limpiarBufferEntrada();
+                  cout << endl << endl;
+                  cout << "Introduce la letra [c] para continuar: ";
+                  getchar();
+                  system("clear");
                   break;
+
                 case 'y':
+                  system("clear");
                   G.Mostrar_Matriz();
+                  limpiarBufferEntrada();
+                  cout << endl << endl;
+                  cout << "Introduce la letra [c] para continuar: ";
+                  getchar();
+                  system("clear");
                   break;
+
                 case 'm':
+                  system("clear");
                   G.RecorridoAmplitud();
+                  limpiarBufferEntrada();
+                  cout << endl << endl;
+                  cout << "Introduce la letra [c] para continuar: ";
+                  getchar();
+                  system("clear");
                   break;
-                // case 'r':
+                
+                case 'r':
+                  system("clear");
+                  G.RecorridoProfundidad();
+                  limpiarBufferEntrada();
+                  cout << endl << endl;
+                  cout << "Introduce la letra [c] para continuar: ";
+                  getchar();
+                  system("clear");
+                  break;
                 // case 'd':
                 // case 'v':
                 // case 'x':
@@ -131,6 +176,8 @@ int main(int argc, char *argv[])
     }
     while (opcion != 'q');
     }
+    system("clear");
     cout << "Fin del programa" << endl;
+    cout << "Saliendo" << endl;
 	return(0);
 };

@@ -33,8 +33,11 @@ void GRAFO :: build (char nombrefichero[85], int &errorapertura) {
 		textfile >> (unsigned &) n >> (unsigned &) m >> (unsigned &) dirigido;
 		// los nodos internamente se numeran desde 0 a n-1
 		// creamos las n listas de sucesores
+    LS.clear();
+    LP.clear();
 		LS.resize(n);
     LP.resize(n);
+    A.resize(n);
         // leemos los m arcos
 		for (k=0;k<m;k++) {
 			textfile >> (unsigned &) i  >> (unsigned &) j >> (int &) dummy.c;
@@ -59,6 +62,8 @@ void GRAFO :: build (char nombrefichero[85], int &errorapertura) {
 			//pendiente la construcci�n de LP, si es dirigido
 			//pendiente del valor a devolver en errorapertura
 			//...}
+  } else {
+    errorapertura = 1;
   }
 }
 
@@ -188,8 +193,8 @@ void GRAFO::RecorridoProfundidad() {
   unsigned postnum_ind = 0;
 
   unsigned i;
-
-  cout << "Introduzca el nodo inicial: ";
+  cout << "Vamos a construir un recorrido en profundidad" << endl;
+  cout << "Elije el nodo de partida: [1-" << n << "]: ";
   cin >> (unsigned &) i;
 
   dfs_num(i - 1, LS, visitado, prenum, prenum_ind, postnum, postnum_ind);
