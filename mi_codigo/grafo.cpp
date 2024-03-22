@@ -278,7 +278,7 @@ void GRAFO::RecorridoAmplitud() { //Construye un recorrido en amplitud desde un 
   cin >> (unsigned &) i;
   cout << "Nodo inicial: " << i << endl;
 
-  vector<unsigned> pred(0, UERROR);
+  vector<unsigned> pred(n, UERROR);
   vector<unsigned> d(n, maxint);
 
   bfs_num(i - 1, LS, pred, d);

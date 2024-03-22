@@ -178,7 +178,6 @@
                     getchar();
                     system("clear");
                     break;
-                  // case 'r';
                   // case 'o';
                   // case 'k';
                   // case 'p';
