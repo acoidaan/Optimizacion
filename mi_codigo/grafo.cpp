@@ -8,6 +8,7 @@
 
 #include "grafo.h"
 #include <cassert>
+#include <algorithm>
 
 void GRAFO :: destroy() {
 	for (unsigned i=0; i< n; i++) {
@@ -169,15 +170,16 @@ void GRAFO::Mostrar_Matriz() {//Muestra la matriz de adyacencia, tanto los nodos
   }
 }
 
-void GRAFO::dfs_num(unsigned i, vector<LA_nodo>  L, vector<bool> &visitado, vector<unsigned> &prenum, unsigned &prenum_ind, vector<unsigned> &postnum, unsigned &postnum_ind) {//Recorrido en profundidad recursivo con recorridos enum y postnum
+void GRAFO::dfs_num(unsigned i, vector<LA_nodo>  L, vector<bool> &visitado, vector<unsigned> &prenum, unsigned &prenum_ind, vector<unsigned> &postnum, unsigned &postnum_ind) //Recorrido en profundidad recursivo con recorridos enum y postnum
+{
 	visitado[i] = true;
-  prenum[prenum_ind++]=i;//asignamos el orden de visita prenum que corresponde el nodo i
-  for (unsigned j=0;j<L[i].size();j++) {
-    if (!visitado[L[i][j].j]) {
-      dfs_num(L[i][j].j, L, visitado, prenum, prenum_ind, postnum, postnum_ind);
-    };
-  postnum[postnum_ind++]=i;//asignamos el orden de visita posnum que corresponde al nodo i
-}
+    prenum[prenum_ind++]=i+1;//asignamos el orden de visita prenum que corresponde el nodo i
+    for (unsigned j=0;j<L[i].size();j++)
+             if (!visitado[L[i][j].j])
+                {
+                dfs_num(L[i][j].j, L, visitado, prenum, prenum_ind, postnum, postnum_ind);
+                };
+    postnum[postnum_ind++]=i+1;//asignamos el orden de visita posnum que corresponde al nodo i
 }
 
 void GRAFO::RecorridoProfundidad() {
@@ -199,6 +201,23 @@ void GRAFO::RecorridoProfundidad() {
 
   dfs_num(i - 1, LS, visitado, prenum, prenum_ind, postnum, postnum_ind);
   // Imprimir prenum y postnum
+  cout << "Orden de visita de los nodos en preorden" << endl << " [";
+  for(unsigned j = 0; j < prenum_ind; j++) {
+    cout << prenum[j];
+    if(j < prenum_ind - 1) {
+      cout << "] -> [";
+    }
+  }
+    cout << "]" << endl;
+
+    cout << "Orden de visita de los nodos en postorden" << endl << " [";
+    for(unsigned j = 0; j < postnum_ind; j++) {
+      cout << postnum[j];
+      if(j < postnum_ind - 1) {
+        cout << "] -> [";
+      }
+    }
+      cout << "]" << endl;
 }
 
 void GRAFO::bfs_num(	unsigned i, //nodo desde el que realizamos el recorrido en amplitud
@@ -242,45 +261,47 @@ void GRAFO::bfs_num(	unsigned i, //nodo desde el que realizamos el recorrido en 
 
 void GRAFO::RecorridoAmplitud() { //Construye un recorrido en amplitud desde un nodo inicial
   unsigned i;
+  cout << "Elije nodo de partida: [1-" << n <<"]: ";
+  cin >> (unsigned &) i;
+  cout << "Nodo inicial: " << i << endl;
+
   vector<unsigned> pred;
   vector<unsigned> d;
 
-  cout << "Vamos a realizar un recorrido en amplitud" << endl;
-  cout << "Elije el nodo de partida: [1-" << n << "]: ";
-  cin >> (unsigned &) i;
-
-  cout << endl << "Nodo inicial: " << i << endl << endl;
   bfs_num(i - 1, LS, pred, d);
 
-  unsigned max_distancia = 0;
-  for(unsigned j = 0; j < d.size(); ++j) {
-    if(d[j] > max_distancia) {
-      max_distancia = d[j];
-    }
-  }
+  cout << endl << "Nodos segun distancia al nodo inicial en numero de aristas" << endl;
 
-  cout << "Nodos segun distancia al nodo inicial en numero de aristas" << endl;
-  for(unsigned distancia = 0; distancia < max_distancia; ++distancia) {
-  cout << "Distancia " << distancia << " aristas :";
+  unsigned max_dist = *max_element(d.begin(), d.end());
+
+  for(unsigned dist = 0; dist <= max_dist; ++dist) {
     bool first = true;
     for(unsigned j = 0; j < n; ++j) {
-      if(d[j] == distancia) {
-        if(!first) {
-          cout << " :";
+      if(d[j] == dist) {
+        if(first) {
+          cout << "Distancia " << dist << " artistas : ";
+          first = false;
         }
-        cout << " " << j + 1;
-        first = false;
+        cout << j + 1 << " ";
       }
     }
-    cout << endl;
+    if(!first) {
+      cout << endl;
+    }
   }
 
-  cout << endl << "Ramas de conexión en el recorrido" << endl;
-  for(unsigned j = 0; j < n; ++j) {
-    if(pred[j] != i - 1 && j != i - 1) {
-      cout << pred[pred[j]] + 1 << " - " << pred[j] << " - " << j + 1 << endl;
-    } else if (j != i - 1) {
+  cout << endl << "Ramas de conexion en el recorrido" << endl;
+  for(unsigned j = 1; j < n; ++j) {
+    if(pred[j] != j) {
       cout << pred[j] + 1 << " - " << j + 1 << endl;
+      if(d[j] > 1) {
+        unsigned current = pred[j];
+        while (current != i - 1) {
+          cout << i << " - ";
+          current = pred[current];
+        }
+        cout << j + 1 << endl;
+      }
     }
   }
 }
