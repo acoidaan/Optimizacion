@@ -259,27 +259,38 @@ void GRAFO::bfs_num(	unsigned i, //nodo desde el que realizamos el recorrido en 
     };
 }
 
+  // Función auxiliar para reconstruir el camino desde el nodo de inicio hasta un nodo objetivo:
+vector<unsigned> construirCamino(unsigned nodo, const vector<unsigned> &pred) {
+    vector<unsigned> camino;
+    // Comenzamos desde el nodo objetivo y seguimos los predecesores hasta el nodo de inicio
+    while (nodo != pred[nodo]) { // Mientras el nodo no sea el nodo de inicio
+        camino.push_back(nodo);
+        nodo = pred[nodo]; // Vamos al predecesor del nodo actual
+    }
+    camino.push_back(nodo); // Añadimos el nodo de inicio al camino
+    reverse(camino.begin(), camino.end()); // Invertimos para tener el orden desde el inicio hasta el objetivo
+    return camino;
+}
+
 void GRAFO::RecorridoAmplitud() { //Construye un recorrido en amplitud desde un nodo inicial
   unsigned i;
   cout << "Elije nodo de partida: [1-" << n <<"]: ";
   cin >> (unsigned &) i;
   cout << "Nodo inicial: " << i << endl;
 
-  vector<unsigned> pred;
-  vector<unsigned> d;
+  vector<unsigned> pred(0, UERROR);
+  vector<unsigned> d(n, maxint);
 
   bfs_num(i - 1, LS, pred, d);
 
   cout << endl << "Nodos segun distancia al nodo inicial en numero de aristas" << endl;
 
-  unsigned max_dist = *max_element(d.begin(), d.end());
-
-  for(unsigned dist = 0; dist <= max_dist; ++dist) {
+  for(unsigned dist = 0; dist <= n; dist++) {
     bool first = true;
     for(unsigned j = 0; j < n; ++j) {
       if(d[j] == dist) {
         if(first) {
-          cout << "Distancia " << dist << " artistas : ";
+          cout << "Distancia " << dist << " aristas: ";
           first = false;
         }
         cout << j + 1 << " ";
@@ -290,18 +301,21 @@ void GRAFO::RecorridoAmplitud() { //Construye un recorrido en amplitud desde un 
     }
   }
 
-  cout << endl << "Ramas de conexion en el recorrido" << endl;
-  for(unsigned j = 1; j < n; ++j) {
-    if(pred[j] != j) {
-      cout << pred[j] + 1 << " - " << j + 1 << endl;
-      if(d[j] > 1) {
-        unsigned current = pred[j];
-        while (current != i - 1) {
-          cout << i << " - ";
-          current = pred[current];
+cout << endl << "Ramas de conexión en el recorrido" << endl;
+for (unsigned j = 0; j < n; ++j) {
+    if (pred[j] != UERROR && pred[j] != j) { // Verificamos que el nodo tenga predecesor y no sea él mismo
+        vector<unsigned> camino = construirCamino(j, pred);
+        // Asegurarse de que el primer nodo (nodo de inicio) se imprima correctamente
+        if (!camino.empty() && camino[0] != i - 1) { // Verifica si el primer nodo del camino no es el nodo de inicio
+            cout << i << " - "; // Imprime el nodo de inicio seguido de "-"
         }
-        cout << j + 1 << endl;
-      }
+        for (size_t k = 0; k < camino.size(); ++k) {
+            cout << camino[k] + 1; // +1 para ajustar la numeración de nodos a la base-1
+            if (k < camino.size() - 1) {
+                cout << " - ";
+            }
+        }
+        cout << endl;
     }
-  }
+}
 }
