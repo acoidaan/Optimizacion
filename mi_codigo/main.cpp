@@ -40,8 +40,8 @@
               cout << "s. Mostrar la lista de [s]ucesores del grafo" << endl;
               cout << "e. Mostrar la lista de pr[e]decesores del grafo" << endl;
               cout << "y. Mostrar la matriz de ad[y]acencia del grafo" << endl;
-              cout << "m. Realizar un recorrido en a[m]plitud del grafo desde un nodo por sus sucesores" << endl;
-              cout << "r. Realizar un recorrido en p[r]ofuncidad del grafo desde un nodo por sucesores" << endl;
+              cout << "m. Realizar un recorrido en a[m]plitud del grafo desde un nodo por sucesores" << endl;
+              cout << "r. Realizar un recorrido en p[r]ofundidad del grafo desde un nodo por sucesores" << endl;
               cout << "d. Caminos minimos: [d]ijkstra" << endl;
               cout << "v. Caminos minimos: Comparamos Dijkstra [v]s BellmanFordEnd" << endl;
               cout << "x. Caminos minimos: Modificacion de Pape y Dsopo" << endl;
