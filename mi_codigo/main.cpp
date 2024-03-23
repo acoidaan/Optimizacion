@@ -45,7 +45,7 @@
               cout << "d. Caminos minimos: [d]ijkstra" << endl;
               cout << "v. Caminos minimos: Comparamos Dijkstra [v]s BellmanFordEnd" << endl;
               cout << "x. Caminos minimos: Modificacion de Pape y Dsopo" << endl;
-              cout << "f. Caminos minimos [f]loyd-warshall" << endl;
+              cout << "f. Caminos minimos: [f]loyd-warshall" << endl;
 
         //Aqu� se a�aden m�s opciones al men� del grafo dirigido
               };
