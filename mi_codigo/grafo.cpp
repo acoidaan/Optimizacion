@@ -99,38 +99,33 @@ void GRAFO::Info_Grafo() {
   cout << "Arcos " << m << " | " << endl;
 }
 
-void Mostrar_Lista(vector<LA_nodo> L) {
-  for (const auto &nodo : L) {
-    for (const auto &elemento : nodo) {
-      cout << "Nodo: " << elemento.j + 1 << "Peso: " << elemento.c << endl;
-    }
+void Mostrar_Lista(const LA_nodo &L) {
+  for (const auto &elemento : L) {
+    cout << " " << elemento.j + 1 << "(Peso: " << elemento.c << ")";
   }
 }
 
-void GRAFO::Mostrar_Listas (int l) {
-  if (l == -1) { // Si el grafo es no dirigido o queremos mostrar predecesores 
-      cout << (Es_dirigido() ? "Lista de predecesores por nodo:" : "Lista de adyacentes por nodo:") << endl;
-      auto &lista = Es_dirigido() ? LP : LS;   // Elige LP o LS basado en si es dirigido o no
-      for(unsigned i = 0; i < lista.size(); ++i) {
-        cout << "Nodo " << i + 1 << " :";
-        for(auto &adyacente : lista[i]) {
-          cout << " " << adyacente.j + 1 << "(Coste: " << adyacente.c << ")";
-        }
-        cout << endl;
-      }
+void GRAFO::Mostrar_Listas(int l) {
+  if (l == -1) {
+    cout << (Es_dirigido() ? "Lista de predecesores por nodo:" : "Lista de adyacentes por nodo:") << endl;
+    auto &lista = Es_dirigido() ? LP : LS; // Elige LP o LS basado en si es dirigido o no
+    for (unsigned i = 0; i < lista.size(); ++i) {
+      cout << "Nodo " << i + 1 << ":";
+      Mostrar_Lista(lista[i]);
+      cout << endl;
+    }
   } else if (l == 1) {
     cout << "Lista de sucesores por nodo:" << endl;
-    for(unsigned i = 0; i < LS.size(); ++i) {
-      cout << "Nodo " << i + 1 << " :";
-      for(auto &adyacente : LS[i]) {
-        cout << " " << adyacente.j + 1 << "(Coste: " << adyacente.c << ")";
-      }
+    for (unsigned i = 0; i < LS.size(); ++i) {
+      cout << "Nodo " << i + 1 << ":";
+      Mostrar_Lista(LS[i]);
       cout << endl;
     }
   } else {
     cout << "El parametro introducido no es valido" << endl;
   }
 }
+
 
 void GRAFO::Mostrar_Matriz() {//Muestra la matriz de adyacencia, tanto los nodos adyacentes como sus costes
   vector<vector<int>> matriz_ady(n, vector<int>(n, 0));
