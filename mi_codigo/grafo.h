@@ -54,6 +54,14 @@ public:
      void RecorridoProfundidad(); //Construye un recorrido en profundidad desde un nodo inicial
      void RecorridoAmplitud(); //Construye un recorrido en amplitud desde un nodo inicial
      ~GRAFO(); //Destructor del objeto grafo
+     void Kruskal();
 };
+
+// Práctica 4
+
+typedef struct {
+  unsigned extremo1, extremo2;
+  int peso;
+} AristaPesada;
 
 #endif

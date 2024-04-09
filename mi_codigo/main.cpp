@@ -179,7 +179,15 @@
                     system("clear");
                     break;
                   // case 'o';
-                  // case 'k';
+                  case 'k':
+                    system("clear");
+                    G.Kruskal();
+                    limpiarBufferEntrada();
+                    cout << endl << endl;
+                    cout << "Introduce la letra [c] para continuar: ";
+                    getchar();
+                    system("clear");
+                    break;
                   // case 'p';
                   // case 'd':
                   // case 'v':

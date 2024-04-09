@@ -314,3 +314,55 @@ for (unsigned j = 0; j < n; ++j) {
     }
 }
 }
+
+// Práctica 4
+
+void GRAFO::Kruskal() {
+  vector <AristaPesada> Aristas;
+  /*Cargamos todas las aristas de la lista de adyacencia*/
+  Aristas.resize(m);
+  unsigned k = 0;
+  for (unsigned i = 0; i < n; i++) {
+    for (unsigned j = 0; j < LS[i].size(); j++) {
+      if (i < LS[i][j].j) {
+        Aristas[k].extremo1 = i;
+        Aristas[k].extremo2 = LS[i][j].j;
+        Aristas[k++].peso = LS[i][j].c;
+      }
+    }
+  };
+
+  unsigned head, cont = 0;
+  int pesoMST = 0;
+
+  /*Inicializamos el registro de componentes conexas: cada nodo está en su componente conexa*/
+  vector <unsigned> Raiz;
+  Raiz.resize(n);
+  for (unsigned q = 0; q < n; q++) {
+    Raiz[q] = q;
+  };
+
+  AristaPesada AristaTemp;
+
+  do {
+    if (head < m - 1) {
+      for (unsigned i = head + 1; i < m; i++) {
+        // Si el peso de la arista en la posicion head es > que el peso de la arista en la posicion i, entonces intercambiamos aristas[i] y aristas[head]
+      };
+    };
+
+    // Miramos si los extremos de la arista en la posicion head estan en ccxas distintas, y si es asi, metemos esa arista
+    if (Raiz[Aristas[head].extremo1] != Raiz[Aristas[head].extremo2]) {
+      // kill = Raiz[Aristas[head].extremo1];
+      // para todo nodo k desde 0 hasta n-1 hacer
+      //   si raiz[k] = kill entonces raiz[k] = Raiz[Aristas[head].extremo2]
+      
+      cont++;
+      cout << "Arista número " << cont << " incorporada (" << Aristas[head].extremo1 << ", " << Aristas[head].extremo2 << "), con peso " << Aristas[head].peso << endl;
+      pesoMST = pesoMST + Aristas[head].peso;
+    };
+
+    head++;
+
+  } while ((cont < (n - 1)) && (head < m));
+}
