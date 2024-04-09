@@ -1,2 +1,2 @@
-# Practica3-Optimizacion
-Práctica 3: La clase GRAFO
+#Optimización
+Implementación de clase grafo en C++
