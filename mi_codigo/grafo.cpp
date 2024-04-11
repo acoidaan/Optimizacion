@@ -318,51 +318,74 @@ for (unsigned j = 0; j < n; ++j) {
 // Práctica 4
 
 void GRAFO::Kruskal() {
-  vector <AristaPesada> Aristas;
-  /*Cargamos todas las aristas de la lista de adyacencia*/
-  Aristas.resize(m);
-  unsigned k = 0;
-  for (unsigned i = 0; i < n; i++) {
-    for (unsigned j = 0; j < LS[i].size(); j++) {
-      if (i < LS[i][j].j) {
-        Aristas[k].extremo1 = i;
-        Aristas[k].extremo2 = LS[i][j].j;
-        Aristas[k++].peso = LS[i][j].c;
-      }
+    vector<AristaPesada> Aristas;
+    // Recogemos todas las aristas
+    for (unsigned i = 0; i < n; i++) {
+        for (auto &ady : LS[i]) {
+            if (i < ady.j) { // Asegura que cada arista se añade solo una vez
+                Aristas.push_back({i, ady.j, ady.c});
+            }
+        }
     }
-  };
 
-  unsigned head, cont = 0;
-  int pesoMST = 0;
+    // Arreglo para mantener la raíz de cada conjunto
+    vector<unsigned> Raiz(n);
+    for (unsigned i = 0; i < n; i++) {
+        Raiz[i] = i;
+    }
 
-  /*Inicializamos el registro de componentes conexas: cada nodo está en su componente conexa*/
-  vector <unsigned> Raiz;
-  Raiz.resize(n);
-  for (unsigned q = 0; q < n; q++) {
-    Raiz[q] = q;
-  };
+    unsigned aristas_incorporadas = 0;
+    int pesoMST = 0;
+    unsigned numAristas = Aristas.size();
+    int contAristas = 0;
 
-  AristaPesada AristaTemp;
+    // Ejecutamos hasta que se hayan incluido n-1 aristas o no queden aristas por procesar
+    while (aristas_incorporadas < n - 1 && numAristas > 0) {
+        int minIndex = -1;
+        int minPeso = maxint;
+  
+        // Buscar la arista de menor peso que no forme ciclo
+        for (unsigned i = 0; i < numAristas; i++) {
+            if (Aristas[i].peso < minPeso && Raiz[Aristas[i].extremo1] != Raiz[Aristas[i].extremo2]) {
+                minPeso = Aristas[i].peso;
+                minIndex = i;
+            }
+        }
 
-  do {
-    if (head < m - 1) {
-      for (unsigned i = head + 1; i < m; i++) {
-        // Si el peso de la arista en la posicion head es > que el peso de la arista en la posicion i, entonces intercambiamos aristas[i] y aristas[head]
-      };
-    };
+        if (minIndex == -1) { // Si no se encuentra ninguna arista válida, rompemos el bucle
+            break;
+        }
 
-    // Miramos si los extremos de la arista en la posicion head estan en ccxas distintas, y si es asi, metemos esa arista
-    if (Raiz[Aristas[head].extremo1] != Raiz[Aristas[head].extremo2]) {
-      // kill = Raiz[Aristas[head].extremo1];
-      // para todo nodo k desde 0 hasta n-1 hacer
-      //   si raiz[k] = kill entonces raiz[k] = Raiz[Aristas[head].extremo2]
-      
-      cont++;
-      cout << "Arista número " << cont << " incorporada (" << Aristas[head].extremo1 << ", " << Aristas[head].extremo2 << "), con peso " << Aristas[head].peso << endl;
-      pesoMST = pesoMST + Aristas[head].peso;
-    };
+        // Procesar la arista seleccionada
+        unsigned root1 = Raiz[Aristas[minIndex].extremo1];
+        unsigned root2 = Raiz[Aristas[minIndex].extremo2];
+        for (unsigned k = 0; k < n; k++) {
+            if (Raiz[k] == root2) {
+                Raiz[k] = root1;
+            }
+        }
 
-    head++;
+        aristas_incorporadas++;
+        pesoMST += Aristas[minIndex].peso;
+        cout << "Arista numero " << ++contAristas << " incorporada (" << Aristas[minIndex].extremo1 + 1 << ", " << Aristas[minIndex].extremo2 + 1 << "), con peso " << Aristas[minIndex].peso << endl;
 
-  } while ((cont < (n - 1)) && (head < m));
+        // Eliminar la arista procesada del conjunto de aristas disponible
+        Aristas[minIndex] = Aristas[numAristas - 1];
+        numAristas--;
+    }
+
+    // Verificación de la conectividad del grafo y conteo de componentes conexas
+    vector<unsigned> componente(n, UERROR);
+    unsigned numComponentes = 0;
+    for (unsigned i = 0; i < n; i++) {
+        if (componente[Raiz[i]] == UERROR) {
+            componente[Raiz[i]] = numComponentes++;
+        }
+    }
+
+    if (numComponentes > 1) {
+        cout << "El grafo no es conexo, tiene " << numComponentes << " componentes conexas, y el bosque generador de minimo coste tiene peso " << pesoMST << endl;
+    } else {
+        cout << "El peso del arbol generador de minimo coste es " << pesoMST << endl;
+    }
 }
